@@ -30,9 +30,11 @@ from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
+from os.path import expanduser
 
 mod = "mod4"
-terminal = "tilix"
+terminal = "kitty"
+home = expanduser("~")
 
 keys = [
         # Switch between windows
@@ -165,7 +167,7 @@ screens = [
                     ],
                 30,
                 ),
-            wallpaper="/home/iscluis/Images/wolf01.jpg"
+            wallpaper=home+"/Images/wolf01.jpg"
             ),
         ]
 
