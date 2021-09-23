@@ -26,17 +26,26 @@
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, layout, widget
+from libqtile import bar, layout, widget, hook
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 from os.path import expanduser
+import os
 
 mod = "mod4"
-terminal = "kitty"
+terminal = "tilix"
 home = expanduser("~")
 
+@hook.subscribe.startup_once
+def startup():
+    os.system(home+"/bin/screen-config.sh")
+
+
 keys = [
+        Key([mod, "shift"],"o", lazy.next_screen()),
+        Key([],"XF86AudioLowerVolume",lazy.spawn("amixer set Master 5%-")),
+        Key([],"XF86AudioRaiseVolume",lazy.spawn("amixer set Master 5%+")),
         # Switch between windows
         Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
         Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -93,25 +102,25 @@ for i in groups:
             desc="Switch to group {}".format(i.name)),
 
         # mod1 + shift + letter of group = switch to & move focused window to group
-        Key([mod, "shift"], i.name, lazy.window.togroup(i.name, switch_group=True),
-            desc="Switch to & move focused window to group {}".format(i.name)),
+        #Key([mod, "shift"], i.name, lazy.window.togroup(i.name, switch_group=True),
+         #   desc="Switch to & move focused window to group {}".format(i.name)),
         # Or, use below if you prefer not to switch to that group.
         # # mod1 + shift + letter of group = move focused window to group
-        # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-        #     desc="move focused window to group {}".format(i.name)),
+        Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
+             desc="move focused window to group {}".format(i.name)),
         ])
 
     layouts = [
-            layout.Columns(border_focus_stack='#d75f5f'),
+            layout.Columns(border_focus_stack='#d75f5f', margin=8),
             layout.Max(),
             # Try more layouts by unleashing below layouts.
             # layout.Stack(num_stacks=2),
             # layout.Bsp(),
-            # layout.Matrix(),
+             layout.Matrix(margin=10),
             # layout.MonadTall(),
             # layout.MonadWide(),
             # layout.RatioTile(),
-            # layout.Tile(),
+             layout.Tile(),
             # layout.TreeTab(),
             # layout.VerticalTile(),
             # layout.Zoomy(),
@@ -144,15 +153,20 @@ screens = [
                         ),
                     widget.TextBox(
                         text = '',
-                        foreground = ["#74438f", "#74438f"],
-                        background = ["#000000","#000000"],
+                        background = ["#000000", "#000000"],
+                        foreground = ["#4f76c7", "#4f76c7"],
                         padding = 0,
                         fontsize = 37
                         ),
-                    widget.Battery(
-                        foreground = ["#ffffff", "#ffffff"],
-                        background = ["#74438f", "#74438f"],
-                        padding = 5),
+                    widget.Memory(background = ["#4f76c7", "#4f76c7"]),
+                    widget.TextBox(
+                        text = '',
+                        foreground = ["#74438f", "#74438f"],
+                        background = ["#4f76c7","#4f76c7"],
+                        padding = 0,
+                        fontsize = 37
+                        ),
+                    widget.CPU(background = ["#74438f", "#74438f"]),
                     widget.TextBox(
                         text = '',
                         background = ["#74438f", "#74438f"],
@@ -160,15 +174,31 @@ screens = [
                         padding = 0,
                         fontsize = 37
                         ),
-
                     widget.Clock(format='%Y-%m-%d %a %I:%M %p',
                         foreground = ["#ffffff", "#ffffff"],
                         background = ["#4f76c7", "#4f76c7"]),
                     ],
                 30,
                 ),
-            wallpaper=home+"/Images/wolf01.jpg"
+            wallpaper=home+"/Images/mandalorian.jpg"
             ),
+        Screen(
+                top=bar.Bar(
+                    [
+                        widget.CurrentLayoutIcon(),
+                        widget.GroupBox(),
+                        widget.TaskList(parse_text=noTitleName,icon_size=20),
+                        widget.Chord(
+                            chords_colors={
+                                'launch': ("#ff0000", "#ffffff"),
+                                },
+                            name_transform=lambda name: name.upper(),
+                            ),
+                        ],
+                    30,
+                    ),
+                wallpaper=home+"/Images/cafe2.jpg",
+                )
         ]
 
 # Drag floating layouts.
