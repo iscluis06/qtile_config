@@ -37,6 +37,9 @@ mod = "mod4"
 terminal = "tilix"
 home = expanduser("~")
 
+def noTitleName(text):
+    return ""
+
 @hook.subscribe.startup_once
 def startup():
     os.system(home+"/bin/screen-config.sh")
@@ -89,8 +92,7 @@ keys = [
 
         Key([mod, "control"], "r", lazy.restart(), desc="Restart Qtile"),
         Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-        Key([mod], "r", lazy.spawncmd(),
-            desc="Spawn a command using a prompt widget"),
+        Key([mod], "r", lazy.spawn("rofi -modi window,drun -show drun"))
         ]
 
 groups = [Group("1",label=""),Group("2",label=""),Group("3",label=""),Group("4",label="")]
@@ -133,24 +135,28 @@ for i in groups:
             )
     extension_defaults = widget_defaults.copy()
 
-def noTitleName(text):
-    return ""
-
 screens = [
         Screen(
             top=bar.Bar(
                 [
-                    widget.CurrentLayoutIcon(),
-                    widget.GroupBox(),
+                    widget.GroupBox(fontsize=32, highlight_method='block'),
                     widget.Systray(),
                     widget.Prompt(),
-                    widget.TaskList(parse_text=noTitleName,icon_size=20),
+                    widget.TaskList(parse_text=noTitleName,icon_size=30, margin_y=7, highlight_method='block',fontsize=30),
                     widget.Chord(
                         chords_colors={
                             'launch': ("#ff0000", "#ffffff"),
                             },
                         name_transform=lambda name: name.upper(),
                         ),
+                    widget.TextBox(
+                        text = '',
+                        foreground = ["#74438f", "#74438f"],
+                         background = ["#4f76c7", "#4f76c7"],
+                         padding = 0,
+                         fontsize = 37
+                         ),
+                    widget.PulseVolume(background = ["#74438f", "#74438f"]),
                     widget.TextBox(
                         text = '',
                         background = ["#000000", "#000000"],
