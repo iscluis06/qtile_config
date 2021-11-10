@@ -42,7 +42,8 @@ def noTitleName(text):
 
 @hook.subscribe.startup_once
 def startup():
-    os.system(home+"/bin/screen-config.sh")
+    #os.system(home+"/bin/screen-config.sh")
+    os.system(home+"/bin/startup.sh")
 
 
 keys = [
